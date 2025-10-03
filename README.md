@@ -1,6 +1,20 @@
 # MySQL to JSON Database Exporter
 
-A powerful and user-friendly Python tool to export MySQL databases to JSON format with download-style progress tracking and GUI directory selection.
+A powerful and user-friendly Python tool to export MySQL databases to JSON format with both command-line and modern GUI interfaces, featuring download-style progress tracking and intuitive controls.
+
+## Available Interfaces
+
+### Command Line Interface (`migrationfinalboss.py`)
+- Interactive command-line interface with step-by-step prompts
+- Cross-platform terminal support
+- Lightweight and fast
+
+### Graphical User Interface (`mysql_to_json_gui.py`)
+- Modern PyQt5-based GUI with tabbed interface
+- Real-time progress tracking with visual progress bars
+- Point-and-click table selection
+- Drag-and-drop friendly output directory selection
+- Live export logs and status updates
 
 ## Features
 
@@ -33,19 +47,23 @@ A powerful and user-friendly Python tool to export MySQL databases to JSON forma
 
 ## Requirements
 
+### For Command Line Interface
 - Python 3.6 or higher
 - MySQL server (local or remote)
-- `mysql-connector-python` package (only external dependency)
+- `mysql-connector-python` package
 
-**Note:** This tool uses only built-in Python libraries except for the MySQL connector, so it can run with minimal setup.
+### For GUI Interface (Additional)
+- `PyQt5` package for the graphical interface
+
+**Note:** The command-line version uses only built-in Python libraries except for the MySQL connector, making it very lightweight. The GUI version adds PyQt5 for the modern interface.
 
 ## Installation
 
-### Option 1: Quick Setup (Global Installation)
+### Option 1: Command Line Interface (Minimal Setup)
 
 1. **Download the script**
-   - Download `migrationfinalboss.py` and `requirements.txt`
-   - Place them in your desired folder
+   - Download `migrationfinalboss.py`
+   - Place it in your desired folder
 
 2. **Install the dependency**
    ```bash
@@ -57,7 +75,23 @@ A powerful and user-friendly Python tool to export MySQL databases to JSON forma
    python migrationfinalboss.py
    ```
 
-### Option 2: Full Project Setup (With Virtual Environment - Recommended)
+### Option 2: GUI Interface (Full Features)
+
+1. **Download both scripts**
+   - Download `migrationfinalboss.py` and `mysql_to_json_gui.py`
+   - Place them in your desired folder
+
+2. **Install dependencies**
+   ```bash
+   pip install mysql-connector-python PyQt5
+   ```
+
+3. **Run the GUI**
+   ```bash
+   python mysql_to_json_gui.py
+   ```
+
+### Option 3: Full Project Setup (With Virtual Environment - Recommended)
 
 1. **Clone or download this repository**
    ```bash
@@ -83,14 +117,27 @@ A powerful and user-friendly Python tool to export MySQL databases to JSON forma
 
 ## Usage
 
-### Basic Usage
+### Command Line Interface
 
-Run the script:
+Run the interactive script:
 ```bash
 python migrationfinalboss.py
 ```
 
-### Step-by-Step Process
+### GUI Interface
+
+Run the graphical interface:
+```bash
+python mysql_to_json_gui.py
+```
+
+The GUI provides a modern, user-friendly interface with:
+- **Tab 1 - Connection**: Enter MySQL connection details and test connection
+- **Tab 2 - Tables**: Browse and select tables with checkboxes
+- **Tab 3 - Export Options**: Choose export format and output directory
+- **Tab 4 - Progress**: Real-time progress tracking and export logs
+
+### Step-by-Step Process (Command Line)
 
 1. **Enter MySQL Connection Details**
    ```

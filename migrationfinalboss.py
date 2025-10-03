@@ -8,7 +8,6 @@ from tkinter import filedialog, messagebox
 import tkinter as tk
 
 def format_file_size(size_bytes):
-    """Convert bytes to human readable format"""
     if size_bytes == 0:
         return "0 B"
     size_names = ["B", "KB", "MB", "GB"]
@@ -20,14 +19,12 @@ def format_file_size(size_bytes):
     return f"{size:.1f} {size_names[i]}"
 
 def show_progress_bar(current, total, prefix="", suffix="", length=30):
-    """Display a download-style progress bar"""
     percent = (current / total) * 100
     filled_length = int(length * current // total)
     bar = '█' * filled_length + '░' * (length - filled_length)
     print(f'\r{prefix} [{bar}] {percent:.1f}% {suffix}', end='', flush=True)
 
 def select_tables_to_export(all_tables):
-    """Allow user to select which tables to export"""
     print(f"\nFound {len(all_tables)} tables in the database:")
     
     for i, table in enumerate(all_tables, 1):
@@ -100,7 +97,6 @@ def select_tables_to_export(all_tables):
     return all_tables
 
 def select_export_format():
-    """Allow user to choose export format"""
     print("\nExport Format Options:")
     print("1. Single JSON file (all tables combined)")
     print("2. Separate JSON files (one file per table)")
@@ -112,7 +108,6 @@ def select_export_format():
         print("Invalid choice. Please enter 1 or 2.")
 
 def select_output_location():
-    """Allow user to choose output location using GUI dialog or manual input"""
     print("\nOutput Location Options:")
     print("1. Current directory (default)")
     print("2. Browse for directory (GUI)")
@@ -122,30 +117,30 @@ def select_output_location():
         choice = input("\nChoose output location (1, 2, or 3): ").strip()
         
         if choice == "1":
-            # Use current directory
+
             output_dir = os.getcwd()
             print(f"Files will be saved to: {output_dir}")
             return output_dir
             
         elif choice == "2":
-            # GUI file browser
+
             print("Opening directory browser...")
             
             try:
-                # Create a root window and hide it
+
                 root = tk.Tk()
-                root.withdraw()  # Hide the main window
-                root.lift()  # Bring to front on macOS
-                root.attributes('-topmost', True)  # Stay on top
+                root.withdraw()
+                root.lift()
+                root.attributes('-topmost', True)
                 
-                # Show directory selection dialog
+
                 output_dir = filedialog.askdirectory(
                     title="Select Download Directory - MySQL to JSON Export",
                     initialdir=os.getcwd(),
                     mustexist=False
                 )
                 
-                root.destroy()  # Clean up
+                root.destroy()
                 
                 if output_dir:
                     print(f"Selected directory: {output_dir}")
@@ -157,10 +152,10 @@ def select_output_location():
             except Exception as e:
                 print(f"GUI dialog error: {e}")
                 print("Falling back to manual input...")
-                choice = "3"  # Fall back to manual input
+                choice = "3"
                 
         if choice == "3":
-            # Manual directory input
+
             while True:
                 custom_path = input("\nEnter the full path for download directory: ").strip()
                 
@@ -168,10 +163,10 @@ def select_output_location():
                     print("Path cannot be empty.")
                     continue
                 
-                # Expand user path (~ on Unix systems)
+
                 custom_path = os.path.expanduser(custom_path)
                 
-                # Check if directory exists
+
                 if os.path.exists(custom_path):
                     if os.path.isdir(custom_path):
                         print(f"Files will be saved to: {custom_path}")
@@ -180,7 +175,7 @@ def select_output_location():
                         print("Error: Path exists but is not a directory.")
                         continue
                 else:
-                    # Ask if user wants to create the directory
+
                     create = input(f"Directory '{custom_path}' does not exist. Create it? (y/n): ").strip().lower()
                     if create in ['y', 'yes']:
                         try:
@@ -223,16 +218,16 @@ def export_database_to_json():
         cursor.execute("SHOW TABLES")
         all_tables = [table[0] for table in cursor.fetchall()]
         
-        # Let user select which tables to export
+
         selected_tables = select_tables_to_export(all_tables)
         
-        # Let user select export format
+
         export_format = select_export_format()
         
-        # Let user select output location
+
         output_dir = select_output_location()
         
-        # Prepare metadata
+
         export_metadata = {
             "database": database_name,
             "exported_at": datetime.now().isoformat(),
@@ -243,7 +238,6 @@ def export_database_to_json():
         }
         
         if export_format == "1":
-            # Single file export
             database_json = export_metadata.copy()
             database_json["tables"] = {}
         
@@ -256,7 +250,7 @@ def export_database_to_json():
         for table_index, table_name in enumerate(selected_tables, 1):
             print(f"\nProcessing table: {table_name} ({table_index}/{total_tables})")
             
-            # Get table info first
+
             cursor.execute(f"SELECT COUNT(*) FROM `{table_name}`")
             row_count = cursor.fetchone()[0]
             
@@ -265,20 +259,20 @@ def export_database_to_json():
             
             print(f"   Columns: {len(columns)} | Rows: {row_count:,}")
             
-            # Fetch data with progress simulation
+
             print(f"   Downloading data...", end="")
             cursor.execute(f"SELECT * FROM `{table_name}`")
             
-            # Simulate download progress
+
             for i in range(11):
                 show_progress_bar(i, 10, "   ", f"fetching rows...")
-                time.sleep(0.1)  # Simulate processing time
+                time.sleep(0.1)
             print()  # New line after progress bar
             
             rows = cursor.fetchall()
             print(f"   Fetched {len(rows):,} rows successfully")
 
-            # Convert data with progress bar
+
             print(f"   Converting data to JSON format...")
             table_data = []
             total_rows = len(rows)
@@ -315,18 +309,18 @@ def export_database_to_json():
             }
             
             if export_format == "1":
-                # Single file: add to main JSON
+
                 database_json["tables"][table_name] = {
                     "columns": columns,
                     "row_count": len(table_data),
                     "data": table_data
                 }
             else:
-                # Separate files: create individual JSON file
+
                 table_file = os.path.join(output_dir, f'{database_name}_{table_name}.json')
                 
                 print(f"   Saving to file...")
-                # Simulate file writing progress
+
                 for i in range(6):
                     show_progress_bar(i, 5, "   ", f"writing JSON...")
                     time.sleep(0.05)
@@ -334,7 +328,7 @@ def export_database_to_json():
                 with open(table_file, 'w', encoding='utf-8') as f:
                     json.dump(table_json, f, indent=2, ensure_ascii=False, default=str)
                 
-                # Get file size
+
                 file_size = os.path.getsize(table_file)
                 show_progress_bar(5, 5, "   ", f"complete")
                 print()  # New line after progress bar
@@ -343,15 +337,14 @@ def export_database_to_json():
                 print(f"   Saved: {os.path.basename(table_file)} ({format_file_size(file_size)})")
                 print(f"   Location: {table_file}")
                 
-                # Add separator between tables
+
                 if table_index < total_tables:
                     print("   " + "-" * 50)
         
-        # Handle final output based on format
+
         print(f"\nFinalizing export...")
         
         if export_format == "1":
-            # Single file export
             output_file = os.path.join(output_dir, f'{database_name}_database.json')
             
             print(f"   Creating combined JSON file...")
@@ -376,7 +369,7 @@ def export_database_to_json():
             total_rows = sum(len(table_info["data"]) for table_info in database_json["tables"].values())
             
         else:
-            # Multiple files export - Create summary file
+
             summary_file = os.path.join(output_dir, f'{database_name}_export_summary.json')
             summary_data = export_metadata.copy()
             summary_data["exported_files"] = exported_files
@@ -385,7 +378,7 @@ def export_database_to_json():
             with open(summary_file, 'w', encoding='utf-8') as f:
                 json.dump(summary_data, f, indent=2, ensure_ascii=False, default=str)
             
-            # Calculate total file size
+
             total_size = sum(os.path.getsize(f) for f in exported_files)
             summary_size = os.path.getsize(summary_file)
             
